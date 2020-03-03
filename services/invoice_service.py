@@ -1,4 +1,4 @@
-from models.pdf_model import Invoice
+from models.invoice_model import Invoice
 
 def generate_invoice(data):
     invoice = Invoice(data)
