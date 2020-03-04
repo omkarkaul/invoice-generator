@@ -20,6 +20,8 @@ Aimed at creating invoices for basic stores with a simple product/price/quantity
 
 Post a collection of products as json object in some given format (written below), this service will then return an invoice with all the products an associated data in a PDF file.
 
+For now, I've added basic pagination support so that a page can only have 10 products on it (i.e. 12 products will produce a report with 2 pages, 10 products on the first page and 2 products on the second). This logic also means that the "total amount due" is only written on the last page!
+
 At the moment, the only endpoint is a POST request on:
 ```
 POST 0.0.0.0:8080/api/invoice
@@ -48,5 +50,5 @@ JSON format for request:
 
 ## TODO:
 
-- [ ] Add pagination support (at the moment a maximum of 35 products are supported, producing one page)
+- [x] Add pagination support (at the moment a maximum of 10 products are supported, producing one page)
 - [ ] Deploy on AWS with Beanstalk & EC2
