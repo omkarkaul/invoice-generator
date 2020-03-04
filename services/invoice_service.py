@@ -9,6 +9,8 @@ def generate_invoice(data):
 
     invoice.write_invoice_content(total, pages)
 
+    invoice.write_notes()
+
     invoice.output('invoice.pdf')
 
 def get_total(data):
