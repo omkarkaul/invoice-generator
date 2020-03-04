@@ -47,10 +47,11 @@ class Invoice:
         self.pdf.set_font('Arial', size=30)
         self.write_text(155, 30, 'Invoice')
 
-        #date and invoice number
+        #date, invoice number, and period
         self.pdf.set_font('Arial', size=12)
         self.write_text(155, 38, f'Date: {self.data["date"]}')
         self.write_text(155, 44, f'Invoice Number: {self.data["invoice_number"]}')
+        self.write_text(155, 50, f'Period: {self.data["period"]}')
 
         #to and from
         self.write_text(35, 54, f'From: {self.data["company_name"]}')
@@ -102,6 +103,18 @@ class Invoice:
             #draw total amount value
             self.pdf.set_font('Arial', 'B', 22)
             self.write_text(145, 270, '$' + str(total) + ' due')
+    
+    def write_notes(self):
+        self.pdf.add_page()
+
+        self.pdf.set_font('Arial', 'B', 14)
+        self.write_text(10, 20, 'Notes:')
+        self.pdf.set_line_width(0.5)
+        self.pdf.line(10, 21, 25, 21)
+
+        self.pdf.set_font('Arial', size=8)
+        self.pdf.set_xy(10, 25)
+        self.pdf.write(5, self.data['notes'])
         
     def write_text(self, x, y, text):
         self.pdf.text(x, y, text)
