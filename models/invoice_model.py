@@ -10,7 +10,7 @@ class Invoice:
         self.pdf.set_font('Arial', 'B', 8)
     
     def write_invoice_content(self, total, pages):
-        all_products = [self.data["products"][k] for k in self.data["products"]]
+        all_products = self.data['products']
 
         if len(all_products) <= 10:
             last_page = True
