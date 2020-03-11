@@ -5,10 +5,19 @@ app = Flask(__name__)
 
 @app.route("/", methods = ["GET"])
 def index():
+    """
+    The index endpoint of the API
+    """
     return "Invoice generator!"
 
 @app.route("/api/invoice", methods = ["POST"])
 def generate_invoice():
+    """
+    The endpoint for generating an invoice.
+    Requires:
+    - request to be a POST
+    - 'Content-type: application/json' header
+    """
     if request.is_json:
         data = request.get_json()
 
