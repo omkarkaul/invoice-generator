@@ -1,15 +1,18 @@
 from fpdf import FPDF
 
 class Invoice:
+    """ The model for the invoice resource """
     def __init__(self, data):
+        """ Creates an invoice instance with the passed data and the FPDF library """
         self.pdf = FPDF()
-        
+
         self.data = data
         self.pdf.set_title(f'{self.data["company_name"]} invoice')
         self.pdf.set_title('invoice')
         self.pdf.set_font('Arial', 'B', 8)
-    
+
     def write_invoice_content(self, total, pages):
+        """ The central function for writing invoice content based on invoice data in instance """
         all_products = self.data['products']
 
         if len(all_products) <= 10:
@@ -22,22 +25,25 @@ class Invoice:
         else:
             # more than 10 products posted to service, 2 or more pages required
             for i in range(pages):
-                if i == pages - 1: # if current page we're writing to is the last page, then set flag to true
+                if i == pages - 1:  # if current page we're writing to is the last page, then set flag to true
                     last_page = True
                 else:
                     last_page = False
 
-                first_index = 0+i*10
-                second_index = 10+i*10
- 
-                products = all_products[first_index: second_index] # products on a given page will be a sublist of all products...
-                                                            # ...  based on page number so that a page always has 10 products
+                first_index = 0 + i * 10
+                second_index = 10 + i * 10
+
+                products = all_products[
+                    first_index:
+                    second_index]  # products on a given page will be a sublist of all products...
+                # ...  based on page number so that a page always has 10 products
                 self.pdf.add_page()
 
                 self.write_header()
                 self.write_content(total, products, last_page)
 
     def write_header(self):
+        """ Draws the generic header content on the first page of the invoice """
         #image and title
         self.pdf.image('invoice_pic.png', 10, 8, 25, 25)
         self.pdf.set_font('Arial', size=22)
@@ -50,14 +56,16 @@ class Invoice:
         #date, invoice number, and period
         self.pdf.set_font('Arial', size=12)
         self.write_text(155, 38, f'Date: {self.data["date"]}')
-        self.write_text(155, 44, f'Invoice Number: {self.data["invoice_number"]}')
+        self.write_text(155, 44,
+                        f'Invoice Number: {self.data["invoice_number"]}')
         self.write_text(155, 50, f'Period: {self.data["period"]}')
 
         #to and from
         self.write_text(35, 54, f'From: {self.data["company_name"]}')
         self.write_text(35, 60, f'To: {self.data["invoice_to"]}')
-    
+
     def write_content(self, total, products, last_page):
+        """ Draws the cells for products and the writes the products to the pages """
         #draw cells
         self.pdf.set_line_width(0.2)
         self.pdf.set_xy(15, 70)
@@ -68,7 +76,7 @@ class Invoice:
         self.pdf.cell(30, 190, '', border=1)
         self.pdf.set_xy(140, 70)
         self.pdf.cell(30, 190, '', border=1)
-        
+
         #write titles and underline (line width 0.5mm, then reset to default)
         self.pdf.set_font('Arial', 'B', 12)
         self.write_text(18, 75, 'Product name:')
@@ -88,14 +96,17 @@ class Invoice:
             price = product['price']
             sku = product['sku']
 
+            if len(title) > 30:
+                title = title[0:26] + '...'  # truncating title and suffixing with dots, if product title longer than 30 chars
+            
             self.write_text(18, y, title)
             self.write_text(112, y, str(sku))
             self.write_text(142, y, str(quantity))
             self.write_text(172, y, str(price))
-                    
+
             y += 5
 
-        if last_page: #if the the page we're currently writing to is the last page, then..
+        if last_page:  #if the the page we're currently writing to is the last page, then..
             #draw total amount cell
             self.pdf.set_xy(140, 260)
             self.pdf.cell(55, 15, '', border=1)
@@ -103,8 +114,9 @@ class Invoice:
             #draw total amount value
             self.pdf.set_font('Arial', 'B', 22)
             self.write_text(145, 270, '$' + str(total) + ' due')
-    
+
     def write_notes(self):
+        """ Creates the last page and adds  """ 
         self.pdf.add_page()
 
         self.pdf.set_font('Arial', 'B', 14)
@@ -115,9 +127,11 @@ class Invoice:
         self.pdf.set_font('Arial', size=8)
         self.pdf.set_xy(10, 25)
         self.pdf.write(5, self.data['notes'])
-        
+
     def write_text(self, x, y, text):
+        """ A function to write text to some coordinates on a page of the invoice """ 
         self.pdf.text(x, y, text)
 
     def output(self, filename):
+        """ A function to save the file locally with the passed filename """
         self.pdf.output(filename, 'F')
